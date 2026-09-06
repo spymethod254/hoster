@@ -109,3 +109,13 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  background-color: #090E1A;
+  color: #ffffff;
+  font-family: system-ui, -apple-system, sans-serif;
+}
