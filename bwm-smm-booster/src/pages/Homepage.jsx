@@ -1,13 +1,14 @@
 import React from 'react';
+import AdminOrders from './AdminOrders'; // <-- 1. IMPORT HAPA JUU
 
 export default function Homepage({ profile, onNavigate }) {
-  const xd = profile?.xdBalance ?? '0.000';
-  const ksh = profile?.kshBalance ?? '0.00';
+  const xd = profile?.xd_balance ?? profile?.xdBalance ?? '0.000';
+  const ksh = profile?.ksh_balance ?? profile?.kshBalance ?? '0.00';
 
   return (
     <div style={{display:'flex', flexDirection:'column', gap:'20px', background:'#050A18', minHeight:'100vh', padding:'16px', paddingBottom:'90px'}}>
-      
-      {/* BALANCE CARD - REPLACES BalanceCard */}
+
+      {/* BALANCE CARD */}
       <div style={{background:'#101D35', border:'1px solid #1E335B', borderRadius:'20px', padding:'20px'}}>
         <div style={{display:'flex', alignItems:'center', gap:'8px', color:'#8A9BB5', fontSize:'11px', fontWeight:'bold', letterSpacing:'1px'}}>
           <span style={{fontSize:'14px'}}>💼</span> TOTAL BALANCE
@@ -24,7 +25,7 @@ export default function Homepage({ profile, onNavigate }) {
         </div>
       </div>
 
-      {/* MULTIPLIERS - SAME AS YOUR CODE BUT WITH INLINE COLORS */}
+      {/* MULTIPLIERS */}
       <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:'12px'}}>
         <div style={{background:'#101D35', border:'1px solid #1E335B', padding:'16px', borderRadius:'16px', textAlign:'center'}}>
           <div style={{fontSize:'10px', color:'#8A9BB5', fontWeight:'bold', textTransform:'uppercase', marginBottom:'6px'}}>Buy Multipliers</div>
@@ -36,7 +37,7 @@ export default function Homepage({ profile, onNavigate }) {
         </div>
       </div>
 
-      {/* QUICK ACCESS - REPLACES QuickAccess */}
+      {/* QUICK ACCESS */}
       <div>
         <h3 style={{color:'white', fontSize:'16px', fontWeight:'bold', marginBottom:'12px'}}>Quick Access</h3>
         <div style={{display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:'10px'}}>
@@ -54,6 +55,14 @@ export default function Homepage({ profile, onNavigate }) {
           </button>
         </div>
       </div>
+
+      {/* 2. ADMIN ORDERS - WEKA HAPA CHINI KABISA */}
+      {profile?.is_admin && (
+        <div style={{marginTop:'10px'}}>
+          <AdminOrders />
+        </div>
+      )}
+
     </div>
   );
 }
