@@ -6,7 +6,10 @@ export default function AdminOrders() {
   const [loading, setLoading] = useState(true);
 
   const fetchOrders = async () => {
-    const { data } = await supabase.from('smm_orders').select('*, profiles(full_name)').order('created_at', { ascending: false });
+    setLoading(true);
+    // Simple fetch without join - hii ndio ilikuwa inaua Vercel
+    const { data, error } = await supabase.from('smm_orders').select('*').order('created_at', { ascending: false });
+    if(error) console.log(error);
     setOrders(data || []);
     setLoading(false);
   };
@@ -28,10 +31,10 @@ export default function AdminOrders() {
         <div key={o.id} style={{background:'#0C1A32', border:'1px solid #1E335B', borderRadius:'12px', padding:'12px', marginBottom:'10px'}}>
           <div style={{display:'flex', justifyContent:'space-between', marginBottom:'6px'}}>
             <span style={{fontSize:'12px', fontWeight:'bold'}}>{o.platform} - {o.service_type} x{o.quantity}</span>
-            <span style={{fontSize:'10px', padding:'3px 8px', borderRadius:'10px', background: o.status==='completed' ? 'rgba(34,197,94,0.2)' : o.status==='processing' ? 'rgba(42,92,255,0.2)' : 'rgba(234,179,8,0.2)', color: o.status==='completed' ? '#4ade80' : o.status==='processing' ? '#60a5fa' : '#facc15'}}>{o.status}</span>
+            <span style={{fontSize:'10px', padding:'3px 8px', borderRadius:'10px', background: o.status==='completed' ? 'rgba(34,197,94,0.2)' : 'rgba(42,92,255,0.2)', color: o.status==='completed' ? '#4ade80' : '#60a5fa'}}>{o.status}</span>
           </div>
           <div style={{fontSize:'11px', color:'#8A9BB5', wordBreak:'break-all', marginBottom:'6px'}}>{o.target_link}</div>
-          <div style={{fontSize:'11px', color:'#8A9BB5', marginBottom:'8px'}}>User: {o.profiles?.full_name} • Cost: {o.cost_xd} XD • {new Date(o.created_at).toLocaleString()}</div>
+          <div style={{fontSize:'11px', color:'#8A9BB5', marginBottom:'8px'}}>User: {o.user_id.slice(0,8)}... • Cost: {o.cost_xd} XD • {new Date(o.created_at).toLocaleString()}</div>
           <div style={{display:'flex', gap:'6px'}}>
             <button onClick={()=>updateStatus(o.id, 'processing')} style={{fontSize:'10px', padding:'5px 10px', borderRadius:'8px', border:'1px solid #2A5CFF', background:'transparent', color:'#2A5CFF', cursor:'pointer'}}>Processing</button>
             <button onClick={()=>updateStatus(o.id, 'completed')} style={{fontSize:'10px', padding:'5px 10px', borderRadius:'8px', background:'#22c55e', color:'white', border:'none', cursor:'pointer'}}>Mark Done ✅</button>
