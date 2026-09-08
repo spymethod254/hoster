@@ -1,100 +1,88 @@
 import React, { useState } from 'react';
 import { supabase } from '../supabaseClient';
 
-export default function SocialBoosting({ profile, onRefreshProfile }) {
+const PLATFORMS = [
+  { id: 'Instagram', rate: 0.002, icon: '📸' },
+  { id: 'TikTok', rate: 0.0015, icon: '🎵' },
+  { id: 'YouTube', rate: 0.003, icon: '▶️' },
+  { id: 'Facebook', rate: 0.001, icon: '👍' },
+];
+const SERVICES = ['Followers', 'Likes', 'Views', 'Comments'];
+
+export default function SocialBoosting({ userId, xdBalance, onOrderSuccess }) {
   const [platform, setPlatform] = useState('Instagram');
-  const [serviceType, setServiceType] = useState('Likes');
-  const [targetLink, setTargetLink] = useState('');
-  const [quantity, setQuantity] = useState(100);
+  const [service, setService] = useState('Followers');
+  const [link, setLink] = useState('');
+  const [qty, setQty] = useState(100);
   const [loading, setLoading] = useState(false);
-  const [status, setStatus] = useState({ text: '', isError: false });
 
-  const costPerUnit = 0.05; 
-  const totalCost = (quantity * costPerUnit).toFixed(3);
+  const currentRate = PLATFORMS.find(p => p.id === platform)?.rate || 0.002;
+  const cost = qty * currentRate;
 
-  const handleOrder = async (e) => {
-    e.preventDefault();
+  const handleOrder = async () => {
+    if (!link) return alert('Weka link bana!');
+    if (cost > xdBalance) return alert(`Balance haitoshi! Unahitaji ${cost.toFixed(3)} XD, uko na ${xdBalance} XD`);
+    
     setLoading(true);
-    setStatus({ text: '', isError: false });
-    if (parseFloat(profile.xdBalance) < parseFloat(totalCost)) {
-      setStatus({ text: 'Insufficient XD funds inside wallet balance.', isError: true });
-      setLoading(false);
-      return;
-    }
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      // 1. Insert order
       const { error: orderError } = await supabase.from('smm_orders').insert({
-        user_id: user.id,
+        user_id: userId,
         platform,
-        service_type: serviceType,
-        target_link: targetLink,
-        quantity,
-        cost_xd: totalCost
+        service_type: service,
+        target_link: link,
+        quantity: qty,
+        cost_xd: cost,
+        status: 'processing'
       });
       if (orderError) throw orderError;
-      const newBalance = (parseFloat(profile.xdBalance) - parseFloat(totalCost)).toFixed(3);
-      const { error: updateError } = await supabase.from('profiles').update({ xd_balance: newBalance }).eq('id', user.id);
-      if (updateError) throw updateError;
-      setStatus({ text: 'SMM Campaign submitted successfully!', isError: false });
-      setTargetLink('');
-      onRefreshProfile();
-    } catch (err) {
-      setStatus({ text: err.message, isError: true });
+
+      // 2. Deduct XD
+      const { error: balError } = await supabase.from('profiles').update({
+        xd_balance: xdBalance - cost
+      }).eq('id', userId);
+      if (balError) throw balError;
+
+      alert(`✅ Order placed! ${qty} ${service} on ${platform}`);
+      setLink('');
+      if (onOrderSuccess) onOrderSuccess();
+    } catch (e) {
+      alert('Error: ' + e.message);
     }
     setLoading(false);
   };
 
-  const labelStyle = {display:'block', fontSize:'10px', fontWeight:'600', color:'#8A9BB5', textTransform:'uppercase', letterSpacing:'1px', marginBottom:'6px'};
-  const inputStyle = {width:'100%', background:'#0C1A32', border:'1px solid #1E335B', color:'white', fontSize:'13px', padding:'12px', borderRadius:'12px', outline:'none', boxSizing:'border-box'};
-
   return (
-    <div style={{minHeight:'100vh', background:'#050A18', padding:'16px', paddingBottom:'90px'}}>
-      <div style={{background:'#101D35', border:'1px solid #1E335B', padding:'24px', borderRadius:'20px', color:'white'}}>
-        <h3 style={{fontSize:'15px', fontWeight:'bold', textTransform:'uppercase', letterSpacing:'1px', marginBottom:'16px', display:'flex', alignItems:'center', gap:'8px'}}>
-          <span style={{color:'#3B82F6'}}>✨</span> Launch SMM Booster
-        </h3>
+    <div style={{background:'#101D35', borderRadius:'20px', padding:'20px', border:'1px solid #1E335B', color:'white'}}>
+      <h2 style={{fontSize:'16px', fontWeight:'bold', marginBottom:'16px'}}>🚀 Boost SMM</h2>
 
-        {status.text && (
-          <div style={{fontSize:'12px', padding:'10px', borderRadius:'12px', marginBottom:'16px', textAlign:'center', border:'1px solid', background: status.isError ? 'rgba(239,68,68,0.1)' : 'rgba(34,197,94,0.1)', borderColor: status.isError ? 'rgba(239,68,68,0.2)' : 'rgba(34,197,94,0.2)', color: status.isError ? '#f87171' : '#4ade80'}}>
-            {status.text}
-          </div>
-        )}
-
-        <form onSubmit={handleOrder} style={{display:'flex', flexDirection:'column', gap:'14px'}}>
-          <div>
-            <label style={labelStyle}>Target Network Channel</label>
-            <select value={platform} onChange={e => setPlatform(e.target.value)} style={inputStyle}>
-              <option>Instagram</option><option>TikTok</option><option>YouTube</option><option>Facebook</option>
-            </select>
-          </div>
-
-          <div>
-            <label style={labelStyle}>Engagement Metric Type</label>
-            <select value={serviceType} onChange={e => setServiceType(e.target.value)} style={inputStyle}>
-              <option>Likes</option><option>Followers</option><option>Views</option><option>Shares</option>
-            </select>
-          </div>
-
-          <div>
-            <label style={labelStyle}>Target Link URL</label>
-            <input type="url" required placeholder="https://..." value={targetLink} onChange={e => setTargetLink(e.target.value)} style={inputStyle} />
-          </div>
-
-          <div>
-            <label style={labelStyle}>Engagement Volume Quantity</label>
-            <input type="number" min="10" max="10000" required value={quantity} onChange={e => setQuantity(Number(e.target.value))} style={inputStyle} />
-          </div>
-
-          <div style={{background:'#0C1A32', padding:'14px', borderRadius:'12px', border:'1px solid #1E335B', display:'flex', justifyContent:'space-between', alignItems:'center', fontSize:'12px', marginTop:'4px'}}>
-            <span style={{color:'#8A9BB5', textTransform:'uppercase'}}>Campaign Cost:</span>
-            <span style={{fontSize:'16px', fontWeight:'bold', color:'#3B82F6'}}>{totalCost} XD</span>
-          </div>
-
-          <button type="submit" disabled={loading} style={{background:'#2A5CFF', color:'white', fontSize:'13px', padding:'14px', fontWeight:'bold', borderRadius:'12px', marginTop:'8px', border:'none', cursor:'pointer', opacity: loading?0.5:1}}>
-            {loading ? 'Processing Order...' : 'Deploy SMM Boost Campaign'}
+      <div style={{display:'grid', gridTemplateColumns:'1fr 1fr', gap:'10px', marginBottom:'16px'}}>
+        {PLATFORMS.map(p => (
+          <button key={p.id} onClick={()=>setPlatform(p.id)} style={{padding:'12px', borderRadius:'12px', border: platform===p.id ? '1px solid #2A5CFF' : '1px solid #1E335B', background: platform===p.id ? 'rgba(42,92,255,0.2)' : '#0C1A32', color:'white', cursor:'pointer', textAlign:'left'}}>
+            <div style={{fontSize:'18px'}}>{p.icon}</div>
+            <div style={{fontSize:'12px', fontWeight:'600'}}>{p.id}</div>
+            <div style={{fontSize:'10px', color:'#8A9BB5'}}>{p.rate} XD/unit</div>
           </button>
-        </form>
+        ))}
       </div>
+
+      <div style={{display:'flex', gap:'8px', marginBottom:'16px'}}>
+        {SERVICES.map(s => (
+          <button key={s} onClick={()=>setService(s)} style={{padding:'6px 12px', borderRadius:'20px', fontSize:'11px', border: service===s ? '1px solid #2A5CFF' : '1px solid #1E335B', background: service===s ? '#2A5CFF' : '#0C1A32', color:'white', cursor:'pointer'}}>{s}</button>
+        ))}
+      </div>
+
+      <input value={link} onChange={e=>setLink(e.target.value)} placeholder="Paste your post/profile link" style={{width:'100%', padding:'12px', borderRadius:'12px', background:'#0C1A32', border:'1px solid #1E335B', color:'white', fontSize:'13px', marginBottom:'12px', outline:'none'}} />
+
+      <div style={{marginBottom:'16px'}}>
+        <div style={{display:'flex', justifyContent:'space-between', fontSize:'12px', color:'#8A9BB5', marginBottom:'6px'}}><span>Quantity: {qty}</span><span style={{color:'#2A5CFF', fontWeight:'bold'}}>{cost.toFixed(3)} XD</span></div>
+        <input type="range" min="50" max="10000" step="50" value={qty} onChange={e=>setQty(Number(e.target.value))} style={{width:'100%', accentColor:'#2A5CFF'}} />
+      </div>
+
+      <button onClick={handleOrder} disabled={loading} style={{width:'100%', padding:'14px', borderRadius:'12px', background: loading ? '#1A2744' : '#2A5CFF', color:'white', fontWeight:'bold', fontSize:'13px', border:'none', cursor:'pointer'}}>
+        {loading ? 'Processing...' : `Order ${qty} ${service} - ${cost.toFixed(3)} XD`}
+      </button>
+      <div style={{fontSize:'10px', color:'#8A9BB5', marginTop:'8px', textAlign:'center'}}>Balance: {xdBalance?.toFixed(3)} XD • Instant delivery</div>
     </div>
   );
 }
