@@ -6,18 +6,18 @@ export default function Header({ userName, onNavigate }) {
   const handleLogout = () => supabase.auth.signOut();
 
   return (
-    <header className="flex items-center justify-between bg-cardBg border border-neonBlue/20 p-4 rounded-dashboard mx-4 mt-4 text-white">
-      <div className="flex items-center gap-4">
-        <button onClick={() => onNavigate('home')} className="hover:text-neonBlue flex items-center gap-2">
+    <header style={{display:'flex', alignItems:'center', justifyContent:'space-between', background:'#101D35', border:'1px solid rgba(42,92,255,0.2)', padding:'16px', borderRadius:'20px', margin:'16px 16px 0 16px', color:'white'}}>
+      <div style={{display:'flex', alignItems:'center', gap:'16px'}}>
+        <button onClick={() => onNavigate('home')} style={{display:'flex', alignItems:'center', gap:'8px', background:'transparent', border:'none', color:'white', cursor:'pointer'}}>
           <Menu size={20} />
-          <span className="font-bold tracking-wide uppercase text-xs md:text-sm">{userName || 'BWM USER'}</span>
+          <span style={{fontWeight:'bold', letterSpacing:'1px', textTransform:'uppercase', fontSize:'12px'}}>{userName || 'BWM USER'}</span>
         </button>
       </div>
-      <div className="flex items-center gap-3">
-        <button onClick={() => onNavigate('profile')} className="p-2 hover:bg-slate-800 rounded-xl transition text-textMuted hover:text-white">
+      <div style={{display:'flex', alignItems:'center', gap:'12px'}}>
+        <button onClick={() => onNavigate('profile')} style={{padding:'8px', background:'#0C1A32', border:'1px solid #1E335B', borderRadius:'12px', color:'#8A9BB5', cursor:'pointer', display:'flex', alignItems:'center'}}>
           <User size={18} />
         </button>
-        <button onClick={handleLogout} className="p-2 hover:bg-red-950/40 rounded-xl transition text-red-400 hover:text-red-300">
+        <button onClick={handleLogout} style={{padding:'8px', background:'rgba(239,68,68,0.1)', border:'1px solid rgba(239,68,68,0.2)', borderRadius:'12px', color:'#f87171', cursor:'pointer', display:'flex', alignItems:'center'}}>
           <LogOut size={18} />
         </button>
       </div>
