@@ -1,5 +1,5 @@
 import React from 'react';
-import AdminOrders from './AdminOrders'; // <-- 1. IMPORT HAPA JUU
+import AdminOrders from '../components,/AdminOrders';
 
 export default function Homepage({ profile, onNavigate }) {
   const xd = profile?.xd_balance ?? profile?.xdBalance ?? '0.000';
