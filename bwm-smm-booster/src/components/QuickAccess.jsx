@@ -1,5 +1,5 @@
 import React from 'react';
-import { Megaphone, User, Home, Layers } from 'lucide-react';
+import { Megaphone, User, Home } from 'lucide-react';
 
 export default function QuickAccess({ onNavigate }) {
   const actions = [
@@ -9,17 +9,17 @@ export default function QuickAccess({ onNavigate }) {
   ];
 
   return (
-    <div className="bg-cardBg/40 rounded-dashboard p-6 border border-slate-900 text-white">
-      <h3 className="text-textMuted text-xs font-bold tracking-wider uppercase mb-4">Quick Access</h3>
-      <div className="grid grid-cols-3 gap-3">
+    <div style={{background:'rgba(16,29,53,0.4)', borderRadius:'20px', padding:'24px', border:'1px solid #1E335B', color:'white'}}>
+      <h3 style={{color:'#8A9BB5', fontSize:'11px', fontWeight:'bold', letterSpacing:'1px', textTransform:'uppercase', marginBottom:'16px'}}>Quick Access</h3>
+      <div style={{display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:'12px'}}>
         {actions.map((item, index) => {
           const Icon = item.icon;
           return (
-            <button key={index} onClick={() => onNavigate(item.target)} className="flex flex-col items-center justify-center gap-2 bg-cardBg border border-slate-800/80 hover:border-accentBlue/50 p-4 rounded-xl transition">
-              <div className="bg-blue-950/60 p-2.5 rounded-xl text-accentBlue">
+            <button key={index} onClick={() => onNavigate(item.target)} style={{display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', gap:'8px', background:'#101D35', border:'1px solid #1E335B', padding:'16px 8px', borderRadius:'14px', cursor:'pointer'}}>
+              <div style={{background:'rgba(42,92,255,0.15)', padding:'10px', borderRadius:'12px', color:'#2A5CFF'}}>
                 <Icon size={18} />
               </div>
-              <span className="text-[11px] font-medium tracking-wide text-center">{item.label}</span>
+              <span style={{fontSize:'11px', fontWeight:500, textAlign:'center', color:'white'}}>{item.label}</span>
             </button>
           );
         })}
