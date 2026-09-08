@@ -12,13 +12,11 @@ export default function Login({ onSwitchView }) {
     e.preventDefault();
     setLoading(true);
     setErr('');
-
     try {
       let emailToUse = loginInput.trim();
-      // Allow username login
       if (!emailToUse.includes('@')) {
-        const { data, error } = await supabase.from('profiles').select('email').eq('username', emailToUse).single();
-        if (error ||!data) throw new Error('Username not found');
+        const { data } = await supabase.from('profiles').select('email').eq('username', emailToUse).single();
+        if (!data) throw new Error('Username not found');
         emailToUse = data.email;
       }
       const { error } = await supabase.auth.signInWithPassword({ email: emailToUse, password });
@@ -41,48 +39,48 @@ export default function Login({ onSwitchView }) {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#050A18] px-4">
-      <div className="w-full max-w-[410px] bg-[#101D35] border border-[#1E335B] rounded-[24px] p-8 shadow-2xl">
-        <div className="flex flex-col items-center">
-          <div className="w-16 h-16 rounded-[18px] bg-[#0B162C] flex items-center justify-center border border-[#1E335B]">
-            <span className="text-xl">🏠</span>
+    <div style={{minHeight:'100vh', display:'flex', alignItems:'center', justifyContent:'center', background:'#050A18', padding:'16px'}}>
+      <div style={{width:'100%', maxWidth:'410px', background:'#101D35', border:'1px solid #1E335B', borderRadius:'24px', padding:'32px', boxShadow:'0 25px 50px -12px rgba(0,0,0,0.5)'}}>
+        <div style={{display:'flex', flexDirection:'column', alignItems:'center'}}>
+          <div style={{width:'64px', height:'64px', borderRadius:'18px', background:'#0B162C', display:'flex', alignItems:'center', justifyContent:'center', border:'1px solid #1E335B'}}>
+            <span style={{fontSize:'20px'}}>🏠</span>
           </div>
-          <p className="text-[#3B82F6] text-[13px] mt-3 font-semibold">Bots. Boosting. VPS</p>
-          <h2 className="text-white text-[28px] font-bold mt-4">Let's Login</h2>
-          <p className="text-[#8A9BB5] text-[14px] mt-1">Login to your account to continue</p>
+          <p style={{color:'#3B82F6', fontSize:'13px', marginTop:'12px', fontWeight:600}}>Bots. Boosting. VPS</p>
+          <h2 style={{color:'white', fontSize:'28px', fontWeight:'bold', marginTop:'16px'}}>Let's Login</h2>
+          <p style={{color:'#8A9BB5', fontSize:'14px', marginTop:'4px'}}>Login to your account to continue</p>
         </div>
 
-        {err && <div className="mt-6 bg-red-500/10 border border-red-500/20 text-red-400 text-xs p-3 rounded-xl text-center">{err}</div>}
+        {err && <div style={{marginTop:'24px', background:'rgba(239,68,68,0.1)', border:'1px solid rgba(239,68,68,0.2)', color:'#f87171', fontSize:'12px', padding:'12px', borderRadius:'12px', textAlign:'center'}}>{err}</div>}
 
-        <form onSubmit={handleLogin} className="flex flex-col gap-4 mt-6">
+        <form onSubmit={handleLogin} style={{display:'flex', flexDirection:'column', gap:'16px', marginTop:'24px'}}>
           <div>
-            <label className="text-[#8A9BB5] text-[11px] font-bold tracking-widest">EMAIL OR USERNAME</label>
+            <label style={{color:'#8A9BB5', fontSize:'11px', fontWeight:'bold', letterSpacing:'1.5px'}}>EMAIL OR USERNAME</label>
             <input type="text" required placeholder="Enter your email or username" value={loginInput} onChange={e => setLoginInput(e.target.value)}
-              className="mt-2 w-full bg-[#0C1A32] border border-[#1E335B] text-white text-sm p-[14px] rounded-xl outline-none placeholder:text-[#4A5C7A] focus:border-[#2A5CFF]" />
+              style={{marginTop:'8px', width:'100%', background:'#0C1A32', border:'1px solid #1E335B', color:'white', fontSize:'14px', padding:'14px', borderRadius:'12px', outline:'none'}} />
           </div>
           <div>
-            <label className="text-[#8A9BB5] text-[11px] font-bold tracking-widest">PASSWORD</label>
-            <div className="relative mt-2">
+            <label style={{color:'#8A9BB5', fontSize:'11px', fontWeight:'bold', letterSpacing:'1.5px'}}>PASSWORD</label>
+            <div style={{position:'relative', marginTop:'8px'}}>
               <input type={showPass? 'text' : 'password'} required placeholder="Enter your password" value={password} onChange={e => setPassword(e.target.value)}
-                className="w-full bg-[#0C1A32] border border-[#1E335B] text-white text-sm p-[14px] pr-10 rounded-xl outline-none placeholder:text-[#4A5C7A] focus:border-[#2A5CFF]" />
-              <button type="button" onClick={() => setShowPass(!showPass)} className="absolute right-3 top-[14px] text-[#4A5C7A]">👁️</button>
+                style={{width:'100%', background:'#0C1A32', border:'1px solid #1E335B', color:'white', fontSize:'14px', padding:'14px', paddingRight:'40px', borderRadius:'12px', outline:'none'}} />
+              <button type="button" onClick={() => setShowPass(!showPass)} style={{position:'absolute', right:'12px', top:'14px', background:'transparent', border:'none', cursor:'pointer'}}>👁️</button>
             </div>
           </div>
 
-          <button type="button" onClick={handleForgot} className="text-right text-[#2A5CFF] text-xs font-medium -mt-1">Forgot password?</button>
+          <button type="button" onClick={handleForgot} style={{textAlign:'right', color:'#2A5CFF', fontSize:'12px', fontWeight:500, background:'transparent', border:'none', cursor:'pointer', marginTop:'-4px'}}>Forgot password?</button>
 
-          <div className="flex items-center gap-3 mt-2">
-            <button type="button" onClick={onSwitchView} className="flex-1 text-[#2A5CFF] font-semibold text-sm py-3">Sign Up</button>
-            <button type="submit" disabled={loading} className="flex-1 bg-[#2A5CFF] hover:bg-[#234EE0] text-white p-3 rounded-xl font-bold text-sm shadow-lg shadow-blue-600/20 transition disabled:opacity-50">
+          <div style={{display:'flex', alignItems:'center', gap:'12px', marginTop:'8px'}}>
+            <button type="button" onClick={onSwitchView} style={{flex:1, color:'#2A5CFF', fontWeight:600, fontSize:'14px', padding:'12px', background:'transparent', border:'none', cursor:'pointer'}}>Sign Up</button>
+            <button type="submit" disabled={loading} style={{flex:1, background:'#2A5CFF', color:'white', padding:'12px', borderRadius:'12px', fontWeight:'bold', fontSize:'14px', border:'none', cursor:'pointer', opacity: loading?0.5:1}}>
               {loading? '...' : 'LOG IN'}
             </button>
           </div>
         </form>
 
-        <p className="text-center text-[#4A5C7A] text-xs mt-6">or continue with</p>
-        <div className="flex justify-center gap-12 mt-4">
-          <button onClick={()=>handleOAuth('google')} className="text-white text-sm flex items-center gap-2 font-medium"><span className="w-5 h-5 bg-white rounded-full text-black flex items-center justify-center text-xs">G</span> Google</button>
-          <button onClick={()=>handleOAuth('github')} className="text-white text-sm flex items-center gap-2 font-medium">◉ GitHub</button>
+        <p style={{textAlign:'center', color:'#4A5C7A', fontSize:'12px', marginTop:'24px'}}>or continue with</p>
+        <div style={{display:'flex', justifyContent:'center', gap:'48px', marginTop:'16px'}}>
+          <button onClick={()=>handleOAuth('google')} style={{color:'white', fontSize:'14px', display:'flex', alignItems:'center', gap:'8px', background:'transparent', border:'none', cursor:'pointer', fontWeight:500}}><span style={{width:'20px', height:'20px', background:'white', borderRadius:'50%', color:'black', display:'flex', alignItems:'center', justifyContent:'center', fontSize:'10px', fontWeight:'bold'}}>G</span> Google</button>
+          <button onClick={()=>handleOAuth('github')} style={{color:'white', fontSize:'14px', display:'flex', alignItems:'center', gap:'8px', background:'transparent', border:'none', cursor:'pointer', fontWeight:500}}>◉ GitHub</button>
         </div>
       </div>
     </div>
