@@ -15,7 +15,7 @@ export default function App() {
   const [authView, setAuthView] = useState('login');     // login, register
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState({
-    fullName: '', xdBalance: '0.000', kshBalance: '0.00', referralCode: ''
+    fullName: '', full_name: '', xdBalance: '0.000', xd_balance: '0.000', kshBalance: '0.00', ksh_balance: '0.00', referralCode: '', referral_code: '', is_admin: false
   });
 
   useEffect(() => {
@@ -29,7 +29,7 @@ export default function App() {
       setSession(session);
       if (session) fetchProfile(session.user.id);
       else {
-        setProfile({ fullName: '', xdBalance: '0.000', kshBalance: '0.00', referralCode: '' });
+        setProfile({ fullName: '', full_name: '', xdBalance: '0.000', xd_balance: '0.000', kshBalance: '0.00', ksh_balance: '0.00', referralCode: '', referral_code: '', is_admin: false });
         setLoading(false);
       }
     });
@@ -42,7 +42,7 @@ export default function App() {
       setLoading(true);
       const { data, error } = await supabase
         .from('profiles')
-        .select('full_name, xd_balance, ksh_balance, referral_code')
+        .select('full_name, xd_balance, ksh_balance, referral_code, is_admin')
         .eq('id', userId)
         .single();
 
@@ -50,9 +50,14 @@ export default function App() {
       if (data) {
         setProfile({
           fullName: data.full_name,
+          full_name: data.full_name,
           xdBalance: data.xd_balance,
+          xd_balance: data.xd_balance,
           kshBalance: data.ksh_balance,
-          referralCode: data.referral_code
+          ksh_balance: data.ksh_balance,
+          referralCode: data.referral_code,
+          referral_code: data.referral_code,
+          is_admin: data.is_admin || false
         });
       }
     } catch (err) {
@@ -89,7 +94,7 @@ export default function App() {
         {currentView === 'home' && (
           <Homepage profile={profile} onNavigate={setCurrentView} />
         )}
-        
+
         {currentView === 'profile' && (
           <Profile profile={profile} />
         )}
