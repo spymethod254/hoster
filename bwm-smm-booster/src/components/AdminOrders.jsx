@@ -26,7 +26,7 @@ export default function AdminOrders() {
   return (
     <div style={{background:'#101D35', borderRadius:'20px', padding:'20px', border:'1px solid #1E335B', color:'white'}}>
       <h2 style={{fontSize:'16px', fontWeight:'bold', marginBottom:'16px'}}>📋 Admin - SMM Orders ({orders.length})</h2>
-      {orders.length === 0 && <div style={{color:'#8A9BB5', fontSize:'13px'}}>Hakuna orders bado bana</div>}
+      {orders.length === 0 && <div style={{color:'#8A9BB5', fontSize:'13px'}}>There's no orders for now.</div>}
       {orders.map(o => (
         <div key={o.id} style={{background:'#0C1A32', border:'1px solid #1E335B', borderRadius:'12px', padding:'12px', marginBottom:'10px'}}>
           <div style={{display:'flex', justifyContent:'space-between', marginBottom:'6px'}}>
