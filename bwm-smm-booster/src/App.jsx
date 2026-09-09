@@ -8,10 +8,11 @@ import Register from './pages/Register';
 import Homepage from './pages/Homepage';
 import Profile from './pages/Profile';
 import SocialBoosting from './pages/SocialBoosting';
+import MyOrders from './pages/MyOrders';
 
 export default function App() {
   const [session, setSession] = useState(null);
-  const [currentView, setCurrentView] = useState('home'); // home, profile, boosting
+  const [currentView, setCurrentView] = useState('home'); // home, profile, boosting, orders
   const [authView, setAuthView] = useState('login');     // login, register
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState({
@@ -101,6 +102,10 @@ export default function App() {
 
         {currentView === 'boosting' && (
           <SocialBoosting profile={profile} onRefreshProfile={handleRefresh} />
+        )}
+
+        {currentView === 'orders' && (
+          <MyOrders />
         )}
       </main>
     </div>
